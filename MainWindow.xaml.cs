@@ -192,6 +192,7 @@ namespace MultiAudioSync
             AudioMechanism = 0;
 
             int[] additionalOffsets = new int[MAX_DEVICE_LENGTH] { int.Parse(textaddoffset1.Text), int.Parse(textaddoffset2.Text) };
+            bool[] isMuted = new bool[MAX_DEVICE_LENGTH] { checkMute1.IsChecked.Value, checkMute2.IsChecked.Value };
 
             if (!WasapiCapture.IsInitialized)
             {
@@ -206,12 +207,13 @@ namespace MultiAudioSync
                         DiscardOnBufferOverflow = true
                     };
                     var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
+                    var volumeProvider = new VolumeSampleProvider(converted) { Volume = 1.0f };
                     int offset = additionalOffsets[i];
                     
-                    Buffers.Add(new AdditionalBuffer(buffered, offset));
+                    Buffers.Add(new AdditionalBuffer(buffered, volumeProvider, offset));
 
                     device.InitPlayback();
-                    PassAudioToDevice(converted, device);
+                    PassAudioToDevice(volumeProvider, device);
                 }
                 
                 WasapiCapture.Record();
@@ -224,6 +226,9 @@ namespace MultiAudioSync
                 var buffered = Buffers[i];
 
                 if (buffered.Offset != currentOffset) buffered.Offset = currentOffset;
+
+                if (isMuted[i] && buffered.VolumeProvider.Volume == 1.0f) buffered.VolumeProvider.Volume = 0.0f;
+                else if (!isMuted[i] && buffered.VolumeProvider.Volume == 0.0f) buffered.VolumeProvider.Volume = 1.0f;
             }
         }
 
