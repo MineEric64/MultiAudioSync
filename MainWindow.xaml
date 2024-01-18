@@ -7,12 +7,6 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TextBox x:Name="textPath" HorizontalAlignment="Left" Margin="25,65,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="247"/>
-        <Label Content="Local Audio Path" HorizontalAlignment="Left" Margin="25,34,0,0" VerticalAlignment="Top"/>
-        <Button x:Name="buttonPath" Content="..." HorizontalAlignment="Left" Margin="285,64,0,0" VerticalAlignment="Top" Width="59" Click="buttonPath_Click"/>
-        <Button x:Name="play" Content="Play" HorizontalAlignment="Left" Margin="25,100,0,0" VerticalAlignment="Top" Width="51" Click="play_Click"/>
-        <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="109,100,0,0" VerticalAlignment="Top" Width="51" Click="pause_Click"/>
-        <Button x:Name="stop" Content="Stop" HorizontalAlignment="Left" Margin="194,100,0,0" VerticalAlignment="Top" Width="51" Click="stop_Click"/>
 
         <GroupBox Header="Device 1" Margin="25,179,486,101">
             <Grid>
@@ -21,7 +15,7 @@
                 <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top"/>
                 <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
                 <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top"/>
-                <CheckBox x:Name="checkEnabled1" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top"/>
+                <CheckBox x:Name="checkEnabled1" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled1_Checked" Unchecked="checkEnabled1_Unchecked"/>
             </Grid>
         </GroupBox>
         <GroupBox Header="Device 2" Margin="327,179,184,101">
@@ -31,10 +25,33 @@
                 <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top"/>
                 <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
                 <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top"/>
-                <CheckBox x:Name="checkEnabled2" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top"/>
+                <CheckBox x:Name="checkEnabled2" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled2_Checked" Unchecked="checkEnabled2_Unchecked"/>
             </Grid>
         </GroupBox>
-        <Button x:Name="buttonApply" Content="Apply Device Settings" HorizontalAlignment="Left" Margin="25,338,0,0" VerticalAlignment="Top" Width="591" Height="33" Click="buttonApply_Click"/>
+        <Button x:Name="buttonApply" Content="Apply Device Settings" HorizontalAlignment="Left" Margin="25,338,0,0" VerticalAlignment="Top" Width="591" Height="33" Click="buttonApply_Click" Background="#FFEFEFEF"/>
+        <TabControl Margin="25,21,339,255">
+            <TabItem Header="from Audio Capture Device">
+                <Grid Background="WhiteSmoke">
+                    <Label Content="Device 1's Additional Offset" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textaddoffset1" HorizontalAlignment="Left" Margin="17,43,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="57,39,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Device 2's Additional Offset" HorizontalAlignment="Left" Margin="212,8,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="textaddoffset2" HorizontalAlignment="Left" Margin="219,43,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="259,39,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="buttonaddoffsetapply" Content="Apply" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="364" Height="27" Click="buttonaddoffsetapply_Click" Background="#FFEFEFEF"/>
+                </Grid>
+            </TabItem>
+            <TabItem Header="from Audio File (Old)">
+                <Grid Background="WhiteSmoke">
+                    <TextBox x:Name="textPath" HorizontalAlignment="Left" Margin="15,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="247"/>
+                    <Label Content="Local Audio Path" HorizontalAlignment="Left" Margin="15,8,0,0" VerticalAlignment="Top"/>
+                    <Button x:Name="buttonPath" Content="..." HorizontalAlignment="Left" Margin="275,38,0,0" VerticalAlignment="Top" Width="59" Click="buttonPath_Click"/>
+                    <Button x:Name="play" Content="Play" HorizontalAlignment="Left" Margin="15,74,0,0" VerticalAlignment="Top" Width="51" Click="play_Click"/>
+                    <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="99,74,0,0" VerticalAlignment="Top" Width="51" Click="pause_Click"/>
+                    <Button x:Name="stop" Content="Stop" HorizontalAlignment="Left" Margin="184,74,0,0" VerticalAlignment="Top" Width="51" Click="stop_Click"/>
+                </Grid>
+            </TabItem>
+        </TabControl>
 
     </Grid>
 </Window>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -15,11 +16,15 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using Microsoft.SqlServer.Server;
 using Microsoft.Win32;
 
+using NAudio;
 using NAudio.CoreAudioApi;
 using NAudio.MediaFoundation;
+using NAudio.Mixer;
 using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace MultiAudioSync
 {
@@ -30,8 +35,15 @@ namespace MultiAudioSync
     {
         public const int MAX_DEVICE_LENGTH = 2;
 
+        public int AudioMechanism { get; set; } = 0;
+        /* 0: from Audio Capture Device (Default)
+         * 1: from Audio File (Old)
+         */
+
         public List<AudioDevice> AudioDevices { get; set; } = new List<AudioDevice>();
         public List<AudioDevice> CurrentAudioDevices { get; set; } = new List<AudioDevice>();
+
+        public List<AdditionalBuffer> Buffers { get; private set; } = new List<AdditionalBuffer>();
 
         public MainWindow()
         {
@@ -48,9 +60,10 @@ namespace MultiAudioSync
         private void buttonPath_Click(object sender, RoutedEventArgs e)
         {
             buttonApply_Click(null, null);
+            AudioMechanism = 1;
 
             var ofd = new OpenFileDialog();
-            ofd.Filter = "Mp3 File|*.mp3|Flac File|*.flac|Wav File|*.wav";
+            ofd.Filter = "|All Files|*.*|Mp3 File|*.mp3|Flac File|*.flac|Wav File|*.wav";
 
             var dialog = ofd.ShowDialog();
 
@@ -173,5 +186,96 @@ namespace MultiAudioSync
                 }
             }
         }
-    }
+
+        private void buttonaddoffsetapply_Click(object sender, RoutedEventArgs e)
+        {
+            AudioMechanism = 0;
+
+            int[] additionalOffsets = new int[MAX_DEVICE_LENGTH] { int.Parse(textaddoffset1.Text), int.Parse(textaddoffset2.Text) };
+
+            if (!WasapiCapture.IsInitialized)
+            {
+                WasapiCapture.Initialize();
+                WasapiCapture.DataAvailable += WasapiCapture_DataAvailable;
+
+                for (int i = 0; i < CurrentAudioDevices.Count; i++)
+                {
+                    var device = CurrentAudioDevices[i];
+                    var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat)
+                    {
+                        DiscardOnBufferOverflow = true
+                    };
+                    var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
+                    int offset = additionalOffsets[i];
+                    
+                    Buffers.Add(new AdditionalBuffer(buffered, offset));
+
+                    device.InitPlayback();
+                    PassAudioToDevice(converted, device);
+                }
+                
+                WasapiCapture.Record();
+                play_Click(null, null);
+            }
+
+            for (int i = 0; i < Buffers.Count; i++)
+            {
+                int currentOffset = additionalOffsets[i];
+                var buffered = Buffers[i];
+
+                if (buffered.Offset != currentOffset) buffered.Offset = currentOffset;
+            }
+        }
+
+        private void WasapiCapture_DataAvailable(object sender, byte[] buffer)
+        {
+            foreach (var buffered in Buffers)
+            {
+                //buffered.Buffer.AddSamples(buffer, 0, buffer.Length);
+
+                _ = Task.Run(async () =>
+                {
+                    if (buffered.Offset > 0) await Task.Delay(buffered.Offset);
+                    buffered.Buffer.AddSamples(buffer, 0, buffer.Length);
+                });
+            }
+        }
+
+        private void checkEnabled1_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableDevice(1, true);
+        }
+
+        private void checkEnabled2_Checked(object sender, RoutedEventArgs e)
+        {
+            EnableDevice(2, true);
+        }
+
+        private void checkEnabled1_Unchecked(object sender, RoutedEventArgs e)
+        {
+            EnableDevice(1, false);
+        }
+
+        private void checkEnabled2_Unchecked(object sender, RoutedEventArgs e)
+        {
+            EnableDevice(2, false);
+        }
+
+        private void EnableDevice(int deviceNumber, bool enabled)
+        {
+            switch (deviceNumber)
+            {
+                case 1:
+                    comboDevice1.IsEnabled = enabled;
+                    textOffset1.IsEnabled = enabled;
+                    textaddoffset1.IsEnabled = enabled;
+                    break;
+
+                case 2:
+                    comboDevice2.IsEnabled = enabled;
+                    textOffset2.IsEnabled = enabled;
+                    textaddoffset2.IsEnabled = enabled;
+                    break;
+            }
+        }    }
 }
