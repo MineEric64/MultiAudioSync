@@ -1,5 +1,4 @@
 ﻿using NAudio.Wave;
-using NAudio.Wave.SampleProviders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,13 +10,11 @@ namespace MultiAudioSync
     public class AdditionalBuffer
     {
         public BufferedWaveProvider Buffer { get; set; }
-        public MixingSampleProvider Mixer { get; set; }
         public int Offset { get; set; }
 
-        public AdditionalBuffer(BufferedWaveProvider buffer, MixingSampleProvider mixer, int offset)
+        public AdditionalBuffer(BufferedWaveProvider buffer, int offset)
         {
             Buffer = buffer;
-            Mixer = mixer;
             Offset = offset;
         }
     }

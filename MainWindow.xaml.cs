@@ -206,15 +206,12 @@ namespace MultiAudioSync
                         DiscardOnBufferOverflow = true
                     };
                     var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
-                    var mixer = new MixingSampleProvider(WasapiCapture.StandardFormat);
-                    mixer.AddMixerInput(converted);
-
                     int offset = additionalOffsets[i];
                     
-                    Buffers.Add(new AdditionalBuffer(buffered, mixer, offset));
+                    Buffers.Add(new AdditionalBuffer(buffered, offset));
 
                     device.InitPlayback();
-                    PassAudioToDevice(mixer, device);
+                    PassAudioToDevice(converted, device);
                 }
                 
                 WasapiCapture.Record();
