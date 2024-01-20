@@ -104,8 +104,8 @@
     <PackageReference Include="NAudio">
       <Version>2.2.1</Version>
     </PackageReference>
-    <PackageReference Include="OptimizedPriorityQueue">
-      <Version>5.1.0</Version>
+    <PackageReference Include="System.ServiceModel.Primitives">
+      <Version>4.8.1</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

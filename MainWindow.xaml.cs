@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -24,8 +26,6 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
-using Priority_Queue;
-
 namespace MultiAudioSync
 {
     /// <summary>
@@ -44,7 +44,7 @@ namespace MultiAudioSync
         public List<AudioDevice> CurrentAudioDevices { get; set; } = new List<AudioDevice>();
 
         public List<AdditionalBuffer> Buffers { get; private set; } = new List<AdditionalBuffer>();
-        public SimplePriorityQueue<DeviceAudioBuffer> BufferQueue = new SimplePriorityQueue<DeviceAudioBuffer>();
+        public SynchronizedCollection<DeviceAudioBuffer> DeviceBuffers = new SynchronizedCollection<DeviceAudioBuffer>();
 
         public MainWindow()
         {
@@ -247,19 +247,28 @@ namespace MultiAudioSync
                 timestamp = Timestamp.FromDateTime(date);
 
                 DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, timestamp, buffered.Buffer, buffer);
-                BufferQueue.Enqueue(bufferInfo, timestamp);
+                DeviceBuffers.Add(bufferInfo);
             }
         }
 
         public async Task ProcessBufferBackgroundAsync()
         {
+            var removes = new List<DeviceAudioBuffer>();
+
             while (true)
             {
-                if (BufferQueue.TryFirst(out var bufferInfo) && Timestamp.Now >= bufferInfo.Timestamp)
+                for (int i = 0; i < DeviceBuffers.Count; i++)
                 {
-                    _ = BufferQueue.Dequeue();
-                    bufferInfo.Buffered.AddSamples(bufferInfo.Buffer, 0, bufferInfo.Buffer.Length);
+                    var bufferInfo = DeviceBuffers[i];
+
+                    if (Timestamp.Now >= bufferInfo.Timestamp)
+                    {
+                        bufferInfo.Buffered.AddSamples(bufferInfo.Buffer, 0, bufferInfo.Buffer.Length);
+                        removes.Add(bufferInfo);
+                    }
                 }
+                for (int i = 0; i < removes.Count; i++) DeviceBuffers.Remove(removes[i]);
+                if (removes.Count > 0) removes.Clear();
 
                 await Task.Delay(10);
             }
