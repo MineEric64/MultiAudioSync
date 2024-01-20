@@ -109,19 +109,20 @@ namespace MultiAudioSync
 
             byte[] buffer = new byte[e.BytesRecorded];
 
-            if (INVOKE_WHEN_SILENCE || e.BytesRecorded > 0)
+            if (INVOKE_WHEN_SILENCE && e.BytesRecorded == 0)
             {
-                if (e.BytesRecorded == 0)
-                {
-                    int bytesPerMillisecond = WaveFormat.AverageBytesPerSecond / 1000;
-                    int bytesRecorded = (int)_sw.ElapsedMilliseconds * bytesPerMillisecond;
+                int bytesPerMillisecond = WaveFormat.AverageBytesPerSecond / 1000;
+                int bytesRecorded = (int)_sw.ElapsedMilliseconds * bytesPerMillisecond;
 
-                    buffer = new byte[bytesRecorded];
-                }
-                else
-                {
-                    Buffer.BlockCopy(e.Buffer, 0, buffer, 0, e.BytesRecorded);
-                }
+                buffer = new byte[bytesRecorded];
+            }
+            else
+            {
+                Buffer.BlockCopy(e.Buffer, 0, buffer, 0, e.BytesRecorded);
+            }
+
+            if (SilenceDetector.IsAudioPlaying(buffer, SilenceDetector.SilenceDetectionMethod.Hybrid))
+            {
                 DataAvailable?.Invoke(sender, buffer);
             }
             _sw.Restart();
