@@ -21,10 +21,10 @@ using Microsoft.Win32;
 
 using NAudio;
 using NAudio.CoreAudioApi;
-using NAudio.MediaFoundation;
-using NAudio.Mixer;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+
+using Priority_Queue;
 
 namespace MultiAudioSync
 {
@@ -44,6 +44,7 @@ namespace MultiAudioSync
         public List<AudioDevice> CurrentAudioDevices { get; set; } = new List<AudioDevice>();
 
         public List<AdditionalBuffer> Buffers { get; private set; } = new List<AdditionalBuffer>();
+        public SimplePriorityQueue<DeviceAudioBuffer> BufferQueue = new SimplePriorityQueue<DeviceAudioBuffer>();
 
         public MainWindow()
         {
@@ -55,6 +56,8 @@ namespace MultiAudioSync
         {
             GetAudioDevices();
             AddAudioDevicesToComboBoxes();
+
+            Task.Run(ProcessBufferBackgroundAsync);
         }
 
         private void buttonPath_Click(object sender, RoutedEventArgs e)
@@ -232,17 +235,33 @@ namespace MultiAudioSync
             }
         }
 
-        private void WasapiCapture_DataAvailable(object sender, byte[] buffer)
+        private void WasapiCapture_DataAvailable(object sender, byte[] buffer) //called every 50ms
         {
-            foreach (var buffered in Buffers)
+            for (int i = 0; i < Buffers.Count; i++)
             {
-                //buffered.Buffer.AddSamples(buffer, 0, buffer.Length);
+                AdditionalBuffer buffered = Buffers[i];
+                DateTime date = DateTime.Now;
+                long timestamp = 0L;
 
-                _ = Task.Run(async () =>
+                if (buffered.Offset > 0) date = date.AddMilliseconds(buffered.Offset);
+                timestamp = Timestamp.FromDateTime(date);
+
+                DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, timestamp, buffered.Buffer, buffer);
+                BufferQueue.Enqueue(bufferInfo, timestamp);
+            }
+        }
+
+        public async Task ProcessBufferBackgroundAsync()
+        {
+            while (true)
+            {
+                if (BufferQueue.TryFirst(out var bufferInfo) && Timestamp.Now >= bufferInfo.Timestamp)
                 {
-                    if (buffered.Offset > 0) await Task.Delay(buffered.Offset);
-                    buffered.Buffer.AddSamples(buffer, 0, buffer.Length);
-                });
+                    _ = BufferQueue.Dequeue();
+                    bufferInfo.Buffered.AddSamples(bufferInfo.Buffer, 0, bufferInfo.Buffer.Length);
+                }
+
+                await Task.Delay(10);
             }
         }
 

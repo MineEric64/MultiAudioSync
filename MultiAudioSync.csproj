@@ -56,7 +56,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AdditionalBuffer.cs" />
+    <Compile Include="DeviceAudioBuffer.cs" />
     <Compile Include="SilenceDetector.cs" />
+    <Compile Include="Timestamp.cs" />
     <Compile Include="WasapiCapture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -101,6 +103,9 @@
   <ItemGroup>
     <PackageReference Include="NAudio">
       <Version>2.2.1</Version>
+    </PackageReference>
+    <PackageReference Include="OptimizedPriorityQueue">
+      <Version>5.1.0</Version>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
