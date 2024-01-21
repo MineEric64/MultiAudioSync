@@ -11,14 +11,14 @@ namespace MultiAudioSync
     public class DeviceAudioBuffer
     {
         public int DeviceNumber { get; set; }
-        public DateTime Date { get; set; }
+        public long Timestamp { get; set; }
         public BufferedWaveProvider Buffered { get; set; }
         public byte[] Buffer { get; set; }
 
-        public DeviceAudioBuffer(int deviceNumber, DateTime date, BufferedWaveProvider buffered, byte[] buffer)
+        public DeviceAudioBuffer(int deviceNumber, long timestamp, BufferedWaveProvider buffered, byte[] buffer)
         {
             DeviceNumber = deviceNumber;
-            Date = date;
+            Timestamp = timestamp;
             Buffered = buffered;
             Buffer = buffer;
         }
