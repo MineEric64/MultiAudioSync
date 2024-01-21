@@ -57,7 +57,7 @@ namespace MultiAudioSync
             GetAudioDevices();
             AddAudioDevicesToComboBoxes();
 
-            Task.Run(ProcessBufferBackgroundAsync);
+            Task.Run(ProcessBufferBackground);
         }
 
         private void buttonPath_Click(object sender, RoutedEventArgs e)
@@ -205,10 +205,7 @@ namespace MultiAudioSync
                 for (int i = 0; i < CurrentAudioDevices.Count; i++)
                 {
                     var device = CurrentAudioDevices[i];
-                    var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat)
-                    {
-                        DiscardOnBufferOverflow = true
-                    };
+                    var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat) { DiscardOnBufferOverflow = true };
                     var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
                     var volumeProvider = new VolumeSampleProvider(converted) { Volume = 1.0f };
                     int offset = additionalOffsets[i];
@@ -249,7 +246,7 @@ namespace MultiAudioSync
             }
         }
 
-        public async Task ProcessBufferBackgroundAsync()
+        public void ProcessBufferBackground()
         {
             var removes = new List<DeviceAudioBuffer>();
 
@@ -268,7 +265,8 @@ namespace MultiAudioSync
                 for (int i = 0; i < removes.Count; i++) DeviceBuffers.Remove(removes[i]);
                 if (removes.Count > 0) removes.Clear();
 
-                await Task.Delay(5);
+                Thread.Sleep(1);
+                //await Task.Delay(1);
             }
         }
 
