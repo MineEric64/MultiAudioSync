@@ -26,6 +26,8 @@ using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
 
+using Priority_Queue;
+
 namespace MultiAudioSync
 {
     /// <summary>
@@ -44,7 +46,7 @@ namespace MultiAudioSync
         public List<AudioDevice> CurrentAudioDevices { get; set; } = new List<AudioDevice>();
 
         public List<AdditionalBuffer> Buffers { get; private set; } = new List<AdditionalBuffer>();
-        public SynchronizedCollection<DeviceAudioBuffer> DeviceBuffers = new SynchronizedCollection<DeviceAudioBuffer>();
+        public SimplePriorityQueue<DeviceAudioBuffer> DeviceBufferQueue = new SimplePriorityQueue<DeviceAudioBuffer>();
 
         public MainWindow()
         {
@@ -205,10 +207,7 @@ namespace MultiAudioSync
                 for (int i = 0; i < CurrentAudioDevices.Count; i++)
                 {
                     var device = CurrentAudioDevices[i];
-                    var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat)
-                    {
-                        DiscardOnBufferOverflow = true
-                    };
+                    var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat) { DiscardOnBufferOverflow = true };
                     var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
                     var volumeProvider = new VolumeSampleProvider(converted) { Volume = 1.0f };
                     int offset = additionalOffsets[i];
@@ -241,13 +240,11 @@ namespace MultiAudioSync
             {
                 AdditionalBuffer buffered = Buffers[i];
                 DateTime date = DateTime.Now;
-                long timestamp = 0L;
 
                 if (buffered.Offset > 0) date = date.AddMilliseconds(buffered.Offset);
-                timestamp = Timestamp.FromDateTime(date);
 
-                DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, timestamp, buffered.Buffer, buffer);
-                DeviceBuffers.Add(bufferInfo);
+                DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, date, buffered.Buffer, buffer);
+                DeviceBufferQueue.Enqueue(bufferInfo, date.Ticks);
             }
         }
 
@@ -257,20 +254,24 @@ namespace MultiAudioSync
 
             while (true)
             {
-                for (int i = 0; i < DeviceBuffers.Count; i++)
+                bool tryFirst = DeviceBufferQueue.TryFirst(out DeviceAudioBuffer bufferInfo);
+
+                if (tryFirst && DateTime.Now >= bufferInfo.Date)
                 {
-                    var bufferInfo = DeviceBuffers[i];
-
-                    if (Timestamp.Now >= bufferInfo.Timestamp)
-                    {
-                        bufferInfo.Buffered.AddSamples(bufferInfo.Buffer, 0, bufferInfo.Buffer.Length);
-                        removes.Add(bufferInfo);
-                    }
+                    _ = DeviceBufferQueue.Dequeue();
+                    bufferInfo.Buffered.AddSamples(bufferInfo.Buffer, 0, bufferInfo.Buffer.Length);
                 }
-                for (int i = 0; i < removes.Count; i++) DeviceBuffers.Remove(removes[i]);
-                if (removes.Count > 0) removes.Clear();
+                else
+                {
+                    int delay = 3;
 
-                await Task.Delay(10);
+                    if (tryFirst)
+                    {
+                        TimeSpan delta = bufferInfo.Date - DateTime.Now;
+                        if (delta.TotalMilliseconds < 3.0) delay = (int)delta.TotalMilliseconds;
+                    }
+                    await Task.Delay(delay);
+                }
             }
         }
 

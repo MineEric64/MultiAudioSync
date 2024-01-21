@@ -66,7 +66,7 @@ namespace MultiAudioSync
                         if (!run)
                         {
                             if (!_sw.IsRunning) _sw.Start();
-                            else run = _sw.ElapsedMilliseconds < 1000;
+                            else run = _sw.ElapsedMilliseconds < 2000;
                         }
                         else if (_sw.IsRunning)
                         {
@@ -77,6 +77,7 @@ namespace MultiAudioSync
                 }
             }
 
+            Debug.WriteLine(run.ToString());
             return run;
         }
     }
