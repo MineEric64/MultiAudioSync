@@ -58,7 +58,6 @@
     <Compile Include="AdditionalBuffer.cs" />
     <Compile Include="DeviceAudioBuffer.cs" />
     <Compile Include="SilenceDetector.cs" />
-    <Compile Include="Timestamp.cs" />
     <Compile Include="WasapiCapture.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

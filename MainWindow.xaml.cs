@@ -241,12 +241,10 @@ namespace MultiAudioSync
             {
                 AdditionalBuffer buffered = Buffers[i];
                 DateTime date = DateTime.Now;
-                long timestamp = 0L;
 
                 if (buffered.Offset > 0) date = date.AddMilliseconds(buffered.Offset);
-                timestamp = Timestamp.FromDateTime(date);
-
-                DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, timestamp, buffered.Buffer, buffer);
+ 
+                DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, date, buffered.Buffer, buffer);
                 DeviceBuffers.Add(bufferInfo);
             }
         }
@@ -261,7 +259,7 @@ namespace MultiAudioSync
                 {
                     var bufferInfo = DeviceBuffers[i];
 
-                    if (Timestamp.Now >= bufferInfo.Timestamp)
+                    if (DateTime.Now >= bufferInfo.Date)
                     {
                         bufferInfo.Buffered.AddSamples(bufferInfo.Buffer, 0, bufferInfo.Buffer.Length);
                         removes.Add(bufferInfo);
@@ -270,7 +268,7 @@ namespace MultiAudioSync
                 for (int i = 0; i < removes.Count; i++) DeviceBuffers.Remove(removes[i]);
                 if (removes.Count > 0) removes.Clear();
 
-                await Task.Delay(10);
+                await Task.Delay(5);
             }
         }
 
