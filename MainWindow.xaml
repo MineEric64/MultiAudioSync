@@ -5,55 +5,84 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MultiAudioSync"
         mc:Ignorable="d"
-        Title="Multi Audio Sync" Height="450" Width="800">
+        Title="Multi Audio Sync" Height="701" Width="1019">
     <Grid>
 
-        <GroupBox Header="Device 1" Margin="25,179,486,101">
+        <GroupBox Header="Device 1" Margin="25,296,682,216" FontFamily="JetBrains Mono ExtraBold">
             <Grid>
-                <ComboBox x:Name="comboDevice1" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top" Width="196"/>
-                <TextBox x:Name="textOffset1" HorizontalAlignment="Left" Margin="73,80,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40"/>
-                <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top"/>
-                <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
-                <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top"/>
-                <CheckBox x:Name="checkEnabled1" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled1_Checked" Unchecked="checkEnabled1_Unchecked"/>
+                <ComboBox x:Name="comboDevice1" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top" Width="196" FontFamily="Noto Sans KR"/>
+                <TextBox x:Name="textOffset1" HorizontalAlignment="Left" Margin="73,80,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                <CheckBox x:Name="checkEnabled1" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled1_Checked" Unchecked="checkEnabled1_Unchecked" FontFamily="JetBrains Mono"/>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Device 2" Margin="327,179,184,101">
+        <GroupBox Header="Device 2" Margin="342,296,365,216" FontFamily="JetBrains Mono ExtraBold">
             <Grid>
-                <ComboBox x:Name="comboDevice2" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top" Width="196"/>
-                <TextBox x:Name="textOffset2" HorizontalAlignment="Left" Margin="73,80,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40"/>
-                <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top"/>
-                <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top"/>
-                <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top"/>
-                <CheckBox x:Name="checkEnabled2" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled2_Checked" Unchecked="checkEnabled2_Unchecked"/>
+                <ComboBox x:Name="comboDevice2" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top" Width="196" FontFamily="Noto Sans KR"/>
+                <TextBox x:Name="textOffset2" HorizontalAlignment="Left" Margin="73,80,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                <CheckBox x:Name="checkEnabled2" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled2_Checked" Unchecked="checkEnabled2_Unchecked" FontFamily="JetBrains Mono"/>
             </Grid>
         </GroupBox>
-        <Button x:Name="buttonApply" Content="Apply Device Settings" HorizontalAlignment="Left" Margin="25,338,0,0" VerticalAlignment="Top" Width="591" Height="33" Click="buttonApply_Click" Background="#FFEFEFEF"/>
-        <TabControl Margin="25,21,339,255">
+        <Button x:Name="buttonApply" Content="Apply Device Settings" HorizontalAlignment="Left" Margin="689,306,0,0" VerticalAlignment="Top" Width="264" Height="314" Click="buttonApply_Click" Background="#FFEFEFEF" FontFamily="JetBrains Mono" FontSize="14"/>
+        <TabControl Margin="25,21,365,440" FontFamily="Noto Sans KR">
             <TabItem Header="from Audio Capture Device">
                 <Grid Background="WhiteSmoke">
-                    <Label Content="Device 1's Additional Offset" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="textaddoffset1" HorizontalAlignment="Left" Margin="17,43,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40"/>
-                    <Label Content="ms" HorizontalAlignment="Left" Margin="57,39,0,0" VerticalAlignment="Top"/>
-                    <Label Content="Device 2's Additional Offset" HorizontalAlignment="Left" Margin="212,8,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="textaddoffset2" HorizontalAlignment="Left" Margin="219,43,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40"/>
-                    <Label Content="ms" HorizontalAlignment="Left" Margin="259,39,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="buttonaddoffsetapply" Content="Apply" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top" Width="364" Height="27" Click="buttonaddoffsetapply_Click" Background="#FFEFEFEF"/>
-                    <CheckBox x:Name="checkMute1" Content="Mute" HorizontalAlignment="Left" Margin="123,44,0,0" VerticalAlignment="Top"/>
-                    <CheckBox x:Name="checkMute2" Content="Mute" HorizontalAlignment="Left" Margin="325,44,0,0" VerticalAlignment="Top"/>
+                    <Label Content="Device 1's Additional Offset" HorizontalAlignment="Left" Margin="10,8,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR" FontWeight="Bold"/>
+                    <TextBox x:Name="textaddoffset1" HorizontalAlignment="Left" Margin="17,43,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="57,39,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <Label Content="Device 2's Additional Offset" HorizontalAlignment="Left" Margin="212,8,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR" FontWeight="Bold"/>
+                    <TextBox x:Name="textaddoffset2" HorizontalAlignment="Left" Margin="219,43,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="259,39,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <Button x:Name="buttonaddoffsetapply" Content="Apply" HorizontalAlignment="Left" Margin="423,0,0,0" VerticalAlignment="Center" Width="152" Height="141" Click="buttonaddoffsetapply_Click" Background="#FFEFEFEF" FontFamily="JetBrains Mono" FontSize="14"/>
+                    <CheckBox x:Name="checkMute1" Content="Mute" HorizontalAlignment="Left" Margin="123,44,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <CheckBox x:Name="checkMute2" Content="Mute" HorizontalAlignment="Left" Margin="325,44,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <Label Content="Device 3's Additional Offset" HorizontalAlignment="Left" Margin="10,96,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR" FontWeight="Bold"/>
+                    <TextBox x:Name="textaddoffset3" HorizontalAlignment="Left" Margin="17,131,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="57,127,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <Label Content="Device 4's Additional Offset" HorizontalAlignment="Left" Margin="212,96,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR" FontWeight="Bold"/>
+                    <TextBox x:Name="textaddoffset4" HorizontalAlignment="Left" Margin="219,131,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                    <Label Content="ms" HorizontalAlignment="Left" Margin="259,127,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <CheckBox x:Name="checkMute3" Content="Mute" HorizontalAlignment="Left" Margin="123,132,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                    <CheckBox x:Name="checkMute4" Content="Mute" HorizontalAlignment="Left" Margin="325,132,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
                 </Grid>
             </TabItem>
             <TabItem Header="from Audio File (Old)">
                 <Grid Background="WhiteSmoke">
-                    <TextBox x:Name="textPath" HorizontalAlignment="Left" Margin="15,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="247"/>
+                    <TextBox x:Name="textPath" HorizontalAlignment="Left" Margin="15,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="461"/>
                     <Label Content="Local Audio Path" HorizontalAlignment="Left" Margin="15,8,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="buttonPath" Content="..." HorizontalAlignment="Left" Margin="275,38,0,0" VerticalAlignment="Top" Width="59" Click="buttonPath_Click"/>
-                    <Button x:Name="play" Content="Play" HorizontalAlignment="Left" Margin="15,74,0,0" VerticalAlignment="Top" Width="51" Click="play_Click"/>
-                    <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="99,74,0,0" VerticalAlignment="Top" Width="51" Click="pause_Click"/>
-                    <Button x:Name="stop" Content="Stop" HorizontalAlignment="Left" Margin="184,74,0,0" VerticalAlignment="Top" Width="51" Click="stop_Click"/>
+                    <Button x:Name="buttonPath" Content="..." HorizontalAlignment="Left" Margin="514,38,0,0" VerticalAlignment="Top" Width="59" Click="buttonPath_Click"/>
+                    <Button x:Name="play" Content="Play" HorizontalAlignment="Left" Margin="15,97,0,0" VerticalAlignment="Top" Width="90" Click="play_Click" Height="40"/>
+                    <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="200,97,0,0" VerticalAlignment="Top" Width="90" Click="pause_Click" Height="40"/>
+                    <Button x:Name="stop" Content="Stop" HorizontalAlignment="Left" Margin="385,97,0,0" VerticalAlignment="Top" Width="90" Click="stop_Click" Height="40"/>
                 </Grid>
             </TabItem>
         </TabControl>
+        <GroupBox Header="Device 3" Margin="25,474,682,43" FontFamily="JetBrains Mono ExtraBold">
+            <Grid>
+                <ComboBox x:Name="comboDevice3" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top" Width="196" FontFamily="Noto Sans KR"/>
+                <TextBox x:Name="textOffset3" HorizontalAlignment="Left" Margin="73,80,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                <CheckBox x:Name="checkEnabled3" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled3_Checked" Unchecked="checkEnabled3_Unchecked" FontFamily="JetBrains Mono"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Device 4" Margin="342,475,365,43" FontFamily="JetBrains Mono ExtraBold">
+            <Grid>
+                <ComboBox x:Name="comboDevice4" HorizontalAlignment="Left" Margin="72,44,0,0" VerticalAlignment="Top" Width="196" FontFamily="Noto Sans KR"/>
+                <TextBox x:Name="textOffset4" HorizontalAlignment="Left" Margin="73,80,0,0" TextWrapping="Wrap" Text="0" VerticalAlignment="Top" Width="40" FontFamily="JetBrains Mono" FontWeight="Bold"/>
+                <Label Content="Offset : " HorizontalAlignment="Left" Margin="9,76,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="Device : " HorizontalAlignment="Left" Margin="10,42,0,0" VerticalAlignment="Top" FontFamily="Noto Sans KR"/>
+                <Label Content="ms" HorizontalAlignment="Left" Margin="113,76,0,0" VerticalAlignment="Top" FontFamily="JetBrains Mono"/>
+                <CheckBox x:Name="checkEnabled4" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled4_Checked" Unchecked="checkEnabled4_Unchecked" FontFamily="JetBrains Mono"/>
+            </Grid>
+        </GroupBox>
+        <Button x:Name="refreshButton" Content="Refresh Audio Devices" HorizontalAlignment="Left" Margin="689,44,0,0" VerticalAlignment="Top" Width="264" Height="179" Background="#FFEFEFEF" Click="refreshButton_Click" FontFamily="JetBrains Mono" FontSize="14"/>
 
     </Grid>
 </Window>

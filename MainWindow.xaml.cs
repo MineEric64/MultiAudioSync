@@ -33,17 +33,17 @@ namespace MultiAudioSync
     /// </summary>
     public partial class MainWindow : Window
     {
-        public const int MAX_DEVICE_LENGTH = 2;
+        public const int MAX_DEVICE_LENGTH = 4;
 
         public int AudioMechanism { get; set; } = 0;
         /* 0: from Audio Capture Device (Default)
          * 1: from Audio File (Old)
          */
 
-        public List<AudioDevice> AudioDevices { get; set; } = new List<AudioDevice>();
-        public List<AudioDevice> CurrentAudioDevices { get; set; } = new List<AudioDevice>();
+        public List<AudioDevice> AudioDevices { get; set; } = new List<AudioDevice>(); //스피커 및 헤드폰과 같은 전체 오디오 장치
+        public AudioDevice[] CurrentAudioDevices { get; set; } = new AudioDevice[MAX_DEVICE_LENGTH] { null, null, null, null }; //프로그램에 연결해서 동기화할 장치
 
-        public List<AdditionalBuffer> Buffers { get; private set; } = new List<AdditionalBuffer>();
+        public AdditionalBuffer[] Buffers { get; private set; } = new AdditionalBuffer[] { null, null, null, null };
         public SynchronizedCollection<DeviceAudioBuffer> DeviceBuffers = new SynchronizedCollection<DeviceAudioBuffer>();
 
         public MainWindow()
@@ -72,6 +72,8 @@ namespace MultiAudioSync
 
             if (dialog.HasValue && dialog.Value)
             {
+                textPath.Text = ofd.FileName;
+
                 foreach (var device in CurrentAudioDevices)
                 {
                     var audioData = GetSoundData(ofd.FileName);
@@ -109,13 +111,16 @@ namespace MultiAudioSync
 
         public void AddAudioDevicesToComboBoxes()
         {
-            var comboBoxes = new ComboBox[MAX_DEVICE_LENGTH] { comboDevice1, comboDevice2 };
+            var comboBoxes = new ComboBox[MAX_DEVICE_LENGTH] { comboDevice1, comboDevice2, comboDevice3, comboDevice4 };
 
-            foreach (var device in AudioDevices)
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
             {
-                for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
+                var comboBox = comboBoxes[i];
+
+                comboBox.Items.Clear();
+
+                foreach (var device in AudioDevices)
                 {
-                    var comboBox = comboBoxes[i];
                     var item = new ComboBoxItem();
                     item.Content = device.Name;
                     item.Tag = device.Id;
@@ -162,10 +167,11 @@ namespace MultiAudioSync
 
         private void buttonApply_Click(object sender, RoutedEventArgs e)
         {
-            CurrentAudioDevices.Clear();
-            var checkBoxes = new CheckBox[MAX_DEVICE_LENGTH] { checkEnabled1, checkEnabled2 };
-            var comboBoxes = new ComboBox[MAX_DEVICE_LENGTH] { comboDevice1, comboDevice2 };
-            var textBoxes = new TextBox[MAX_DEVICE_LENGTH] { textOffset1, textOffset2 };
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++) CurrentAudioDevices[i] = null;
+
+            var checkBoxes = new CheckBox[MAX_DEVICE_LENGTH] { checkEnabled1, checkEnabled2, checkEnabled3, checkEnabled4 };
+            var comboBoxes = new ComboBox[MAX_DEVICE_LENGTH] { comboDevice1, comboDevice2, comboDevice3, comboDevice4 };
+            var textBoxes = new TextBox[MAX_DEVICE_LENGTH] { textOffset1, textOffset2, textOffset3, textOffset4 };
 
             for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
             {
@@ -184,7 +190,7 @@ namespace MultiAudioSync
                         var device = AudioDevices.Where(x => x.Id == id).First();
 
                         device.Offset = offset;
-                        CurrentAudioDevices.Add(device);
+                        CurrentAudioDevices[i] = device;
                     }
                 }
             }
@@ -194,37 +200,49 @@ namespace MultiAudioSync
         {
             AudioMechanism = 0;
 
-            int[] additionalOffsets = new int[MAX_DEVICE_LENGTH] { int.Parse(textaddoffset1.Text), int.Parse(textaddoffset2.Text) };
-            bool[] isMuted = new bool[MAX_DEVICE_LENGTH] { checkMute1.IsChecked.Value, checkMute2.IsChecked.Value };
+            TextBox[] textAddOffsets = new TextBox[MAX_DEVICE_LENGTH] { textaddoffset1, textaddoffset2, textaddoffset3, textaddoffset4 };
+            int[] additionalOffsets = new int[MAX_DEVICE_LENGTH] { 0, 0, 0, 0 };
+            bool[] isMuted = new bool[MAX_DEVICE_LENGTH] { checkMute1.IsChecked.Value, checkMute2.IsChecked.Value, checkMute3.IsChecked.Value, checkMute4.IsChecked.Value };
+
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
+            {
+                var textAddOffset = textAddOffsets[i];
+                if (int.TryParse(textAddOffset.Text, out int offset)) additionalOffsets[i] = offset;
+            }
 
             if (!WasapiCapture.IsInitialized)
             {
                 WasapiCapture.Initialize();
                 WasapiCapture.DataAvailable += WasapiCapture_DataAvailable;
 
-                for (int i = 0; i < CurrentAudioDevices.Count; i++)
+                for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
                 {
                     var device = CurrentAudioDevices[i];
-                    var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat) { DiscardOnBufferOverflow = true };
-                    var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
-                    var volumeProvider = new VolumeSampleProvider(converted) { Volume = 1.0f };
-                    int offset = additionalOffsets[i];
-                    
-                    Buffers.Add(new AdditionalBuffer(buffered, volumeProvider, offset));
 
-                    device.InitPlayback();
-                    PassAudioToDevice(volumeProvider, device);
+                    if (device != null)
+                    {
+                        var buffered = new BufferedWaveProvider(WasapiCapture.WaveFormat) { DiscardOnBufferOverflow = true };
+                        var converted = new WdlResamplingSampleProvider(buffered.ToSampleProvider(), 44100).ToStereo();
+                        var volumeProvider = new VolumeSampleProvider(converted) { Volume = 1.0f };
+                        int offset = additionalOffsets[i];
+
+                        Buffers[i] = new AdditionalBuffer(buffered, volumeProvider, offset);
+
+                        device.InitPlayback();
+                        PassAudioToDevice(volumeProvider, device);
+                    }
                 }
                 
                 WasapiCapture.Record();
                 play_Click(null, null);
             }
 
-            for (int i = 0; i < Buffers.Count; i++)
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
             {
                 int currentOffset = additionalOffsets[i];
                 var buffered = Buffers[i];
 
+                if (buffered == null) continue;
                 if (buffered.Offset != currentOffset) buffered.Offset = currentOffset;
 
                 if (isMuted[i] && buffered.VolumeProvider.Volume == 1.0f) buffered.VolumeProvider.Volume = 0.0f;
@@ -234,11 +252,12 @@ namespace MultiAudioSync
 
         private void WasapiCapture_DataAvailable(object sender, byte[] buffer) //called every 50ms
         {
-            for (int i = 0; i < Buffers.Count; i++)
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
             {
                 AdditionalBuffer buffered = Buffers[i];
                 DateTime date = DateTime.Now;
 
+                if (buffered == null) continue;
                 if (buffered.Offset > 0) date = date.AddMilliseconds(buffered.Offset);
  
                 DeviceAudioBuffer bufferInfo = new DeviceAudioBuffer(i + 1, date, buffered.Buffer, buffer);
@@ -270,25 +289,15 @@ namespace MultiAudioSync
             }
         }
 
-        private void checkEnabled1_Checked(object sender, RoutedEventArgs e)
-        {
-            EnableDevice(1, true);
-        }
+        private void checkEnabled1_Checked(object sender, RoutedEventArgs e) { EnableDevice(1, true); }
+        private void checkEnabled2_Checked(object sender, RoutedEventArgs e) { EnableDevice(2, true); }
+        private void checkEnabled3_Checked(object sender, RoutedEventArgs e) { EnableDevice(3, true); }
+        private void checkEnabled4_Checked(object sender, RoutedEventArgs e) { EnableDevice(4, true); }
 
-        private void checkEnabled2_Checked(object sender, RoutedEventArgs e)
-        {
-            EnableDevice(2, true);
-        }
-
-        private void checkEnabled1_Unchecked(object sender, RoutedEventArgs e)
-        {
-            EnableDevice(1, false);
-        }
-
-        private void checkEnabled2_Unchecked(object sender, RoutedEventArgs e)
-        {
-            EnableDevice(2, false);
-        }
+        private void checkEnabled1_Unchecked(object sender, RoutedEventArgs e) { EnableDevice(1, false); }
+        private void checkEnabled2_Unchecked(object sender, RoutedEventArgs e) { EnableDevice(2, false); }
+        private void checkEnabled3_Unchecked(object sender, RoutedEventArgs e) { EnableDevice(3, false); }
+        private void checkEnabled4_Unchecked(object sender, RoutedEventArgs e) { EnableDevice(4, false); }
 
         private void EnableDevice(int deviceNumber, bool enabled)
         {
@@ -305,6 +314,25 @@ namespace MultiAudioSync
                     textOffset2.IsEnabled = enabled;
                     textaddoffset2.IsEnabled = enabled;
                     break;
+
+                case 3:
+                    comboDevice3.IsEnabled = enabled;
+                    textOffset3.IsEnabled = enabled;
+                    textaddoffset3.IsEnabled = enabled;
+                    break;
+
+                case 4:
+                    comboDevice4.IsEnabled = enabled;
+                    textOffset4.IsEnabled = enabled;
+                    textaddoffset4.IsEnabled = enabled;
+                    break;
             }
-        }    }
+        }
+
+        private void refreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            GetAudioDevices();
+            AddAudioDevicesToComboBoxes();
+        }
+    }
 }

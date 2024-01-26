@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>mas.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -95,6 +98,10 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="Resources\JetBrainsMono-Bold.ttf" />
+    <None Include="Resources\JetBrainsMono-ExtraBold.ttf" />
+    <None Include="Resources\JetBrainsMono-Regular.ttf" />
+    <None Include="Resources\NotoSansKR-Regular.otf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -106,6 +113,9 @@
     <PackageReference Include="System.ServiceModel.Primitives">
       <Version>4.8.1</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="mas.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
