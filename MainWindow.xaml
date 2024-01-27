@@ -55,10 +55,11 @@
                 <Grid Background="WhiteSmoke">
                     <TextBox x:Name="textPath" HorizontalAlignment="Left" Margin="15,39,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="461"/>
                     <Label Content="Local Audio Path" HorizontalAlignment="Left" Margin="15,8,0,0" VerticalAlignment="Top"/>
-                    <Button x:Name="buttonPath" Content="..." HorizontalAlignment="Left" Margin="514,38,0,0" VerticalAlignment="Top" Width="59" Click="buttonPath_Click"/>
-                    <Button x:Name="play" Content="Play" HorizontalAlignment="Left" Margin="15,97,0,0" VerticalAlignment="Top" Width="90" Click="play_Click" Height="40"/>
-                    <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="200,97,0,0" VerticalAlignment="Top" Width="90" Click="pause_Click" Height="40"/>
-                    <Button x:Name="stop" Content="Stop" HorizontalAlignment="Left" Margin="385,97,0,0" VerticalAlignment="Top" Width="90" Click="stop_Click" Height="40"/>
+                    <Button x:Name="buttonPath" Content="..." HorizontalAlignment="Left" Margin="514,38,0,0" VerticalAlignment="Top" Width="59" Click="buttonPath_Click" Background="#FFEFEFEF"/>
+                    <Button x:Name="play" Content="Play" HorizontalAlignment="Left" Margin="16,0,0,0" VerticalAlignment="Center" Width="90" Click="play_Click" Height="40" Background="#FFEFEFEF"/>
+                    <Button x:Name="pause" Content="Pause" HorizontalAlignment="Left" Margin="201,0,0,0" VerticalAlignment="Center" Width="90" Click="pause_Click" Height="40" Background="#FFEFEFEF"/>
+                    <Button x:Name="stop" Content="Stop" HorizontalAlignment="Left" Margin="386,0,0,0" VerticalAlignment="Center" Width="90" Click="stop_Click" Height="40" Background="#FFEFEFEF"/>
+                    <Label Content="*Note: this method is deprecated because of inconvinient." HorizontalAlignment="Left" Margin="10,142,0,0" VerticalAlignment="Top"/>
                 </Grid>
             </TabItem>
         </TabControl>

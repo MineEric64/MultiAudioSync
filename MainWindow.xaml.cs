@@ -58,6 +58,8 @@ namespace MultiAudioSync
             AddAudioDevicesToComboBoxes();
 
             Task.Run(ProcessBufferBackground);
+
+            for (int i = 1; i <= MAX_DEVICE_LENGTH; i++) EnableDevice(i, false);
         }
 
         private void buttonPath_Click(object sender, RoutedEventArgs e)
@@ -307,24 +309,28 @@ namespace MultiAudioSync
                     comboDevice1.IsEnabled = enabled;
                     textOffset1.IsEnabled = enabled;
                     textaddoffset1.IsEnabled = enabled;
+                    checkMute1.IsEnabled = enabled;
                     break;
 
                 case 2:
                     comboDevice2.IsEnabled = enabled;
                     textOffset2.IsEnabled = enabled;
                     textaddoffset2.IsEnabled = enabled;
+                    checkMute2.IsEnabled = enabled;
                     break;
 
                 case 3:
                     comboDevice3.IsEnabled = enabled;
                     textOffset3.IsEnabled = enabled;
                     textaddoffset3.IsEnabled = enabled;
+                    checkMute3.IsEnabled = enabled;
                     break;
 
                 case 4:
                     comboDevice4.IsEnabled = enabled;
                     textOffset4.IsEnabled = enabled;
                     textaddoffset4.IsEnabled = enabled;
+                    checkMute4.IsEnabled = enabled;
                     break;
             }
         }
