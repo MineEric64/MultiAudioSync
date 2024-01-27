@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -14,6 +15,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
@@ -43,7 +45,7 @@ namespace MultiAudioSync
         public List<AudioDevice> AudioDevices { get; set; } = new List<AudioDevice>(); //스피커 및 헤드폰과 같은 전체 오디오 장치
         public AudioDevice[] CurrentAudioDevices { get; set; } = new AudioDevice[MAX_DEVICE_LENGTH] { null, null, null, null }; //프로그램에 연결해서 동기화할 장치
 
-        public AdditionalBuffer[] Buffers { get; private set; } = new AdditionalBuffer[] { null, null, null, null };
+        public AdditionalBuffer[] Buffers { get; private set; } = new AdditionalBuffer[MAX_DEVICE_LENGTH] { null, null, null, null };
         public SynchronizedCollection<DeviceAudioBuffer> DeviceBuffers = new SynchronizedCollection<DeviceAudioBuffer>();
 
         public MainWindow()
@@ -134,20 +136,25 @@ namespace MultiAudioSync
 
         private void play_Click(object sender, RoutedEventArgs e)
         {
-            foreach (var device in CurrentAudioDevices)
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
             {
-                _ = Task.Run(async () =>
+                AudioDevice device = CurrentAudioDevices[i];
+
+                if (device != null)
                 {
-                    var start = DateTime.Now;
+                    _ = Task.Run(async () =>
+                    {
+                        var start = DateTime.Now;
 
-                    if (device.Offset > 0) await Task.Delay(device.Offset);
-                    device.Playback.Play();
+                        if (device.Offset > 0) await Task.Delay(device.Offset);
+                        device.Playback.Play();
 
-                    var end = DateTime.Now;
-                    int elapsed = (int)(end - start).TotalMilliseconds;
+                        var end = DateTime.Now;
+                        int elapsed = (int)(end - start).TotalMilliseconds;
 
-                    Debug.WriteLine($"{device.Name} : {elapsed}ms Elapsed.");
-                });
+                        Debug.WriteLine($"{device.Name} : {elapsed}ms Elapsed.");
+                    });
+                }
             }
         }
 
@@ -180,6 +187,7 @@ namespace MultiAudioSync
                 var checkBox = checkBoxes[i];
                 var comboBox = comboBoxes[i];
                 var textBox = textBoxes[i];
+                AudioDevice device = null;
 
                 if (checkBox.IsChecked.HasValue && checkBox.IsChecked.Value)
                 {
@@ -189,12 +197,13 @@ namespace MultiAudioSync
                     {
                         string id = (string)item.Tag;
                         int offset = int.Parse(textBox.Text);
-                        var device = AudioDevices.Where(x => x.Id == id).First();
 
+                        device = AudioDevices.Where(x => x.Id == id).First();
                         device.Offset = offset;
-                        CurrentAudioDevices[i] = device;
                     }
                 }
+
+                CurrentAudioDevices[i] = device;
             }
         }
 
@@ -339,6 +348,50 @@ namespace MultiAudioSync
         {
             GetAudioDevices();
             AddAudioDevicesToComboBoxes();
+        }
+
+        private void initButton_Click(object sender, RoutedEventArgs e)
+        {
+            WasapiCapture.Stop();
+            WasapiCapture.DataAvailable -= WasapiCapture_DataAvailable;
+
+            AudioMechanism = 0;
+
+            for (int i = 0; i < MAX_DEVICE_LENGTH; i++)
+            {
+                var device = CurrentAudioDevices[i];
+
+                if (device != null)
+                {
+                    device.Playback.Stop();
+                    device.Playback.Dispose();
+                    CurrentAudioDevices[i] = null;
+                }
+                Buffers[i] = null;
+            }
+            DeviceBuffers.Clear();
+
+            refreshButton_Click(null, null);
+
+            checkEnabled1.IsChecked = false;
+            checkEnabled2.IsChecked = false;
+            checkEnabled3.IsChecked = false;
+            checkEnabled4.IsChecked = false;
+
+            textOffset1.Text = "0";
+            textOffset2.Text = "0";
+            textOffset3.Text = "0";
+            textOffset4.Text = "0";
+
+            textaddoffset1.Text = "0";
+            textaddoffset2.Text = "0";
+            textaddoffset3.Text = "0";
+            textaddoffset4.Text = "0";
+
+            checkMute1.IsChecked = false;
+            checkMute2.IsChecked = false;
+            checkMute3.IsChecked = false;
+            checkMute4.IsChecked = false;
         }
     }
 }

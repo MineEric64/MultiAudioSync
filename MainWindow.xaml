@@ -83,7 +83,8 @@
                 <CheckBox x:Name="checkEnabled4" Content="Enabled" HorizontalAlignment="Left" Margin="10,16,0,0" VerticalAlignment="Top" Checked="checkEnabled4_Checked" Unchecked="checkEnabled4_Unchecked" FontFamily="JetBrains Mono"/>
             </Grid>
         </GroupBox>
-        <Button x:Name="refreshButton" Content="Refresh Audio Devices" HorizontalAlignment="Left" Margin="689,44,0,0" VerticalAlignment="Top" Width="264" Height="179" Background="#FFEFEFEF" Click="refreshButton_Click" FontFamily="JetBrains Mono" FontSize="14"/>
+        <Button x:Name="refreshButton" Content="Refresh Audio Devices" HorizontalAlignment="Left" Margin="689,149,0,0" VerticalAlignment="Top" Width="264" Height="74" Background="#FFEFEFEF" Click="refreshButton_Click" FontFamily="JetBrains Mono" FontSize="14"/>
+        <Button x:Name="initButton" Content="Initialize" HorizontalAlignment="Left" Margin="689,44,0,0" VerticalAlignment="Top" Width="264" Height="73" Background="#FFEFEFEF" FontFamily="JetBrains Mono" FontSize="14" Click="initButton_Click"/>
 
     </Grid>
 </Window>
