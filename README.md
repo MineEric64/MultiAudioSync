@@ -3,7 +3,7 @@
  > [!NOTE]
  > Perfect-Synchronized Surround System for Multi Audio Devices
 
-This program compensates the audio device's delay to syncronize your multi audio devices.
+This program compensates the audio device's delay to synchronize your multi audio devices.
 > So you can make a surround system **even if your audio device doesn't support official surround system.**
 
 ## Features
