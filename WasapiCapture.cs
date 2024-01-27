@@ -50,7 +50,7 @@ namespace MultiAudioSync
 
         public static event EventHandler<byte[]> DataAvailable;
 
-        public static bool IsInitialized { get; set; } = false;
+        public static bool IsInitialized { get; private set; } = false;
 
         /// <summary>
         /// Initializes the output capture device.
