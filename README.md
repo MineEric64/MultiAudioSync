@@ -4,7 +4,7 @@
  > Perfect-Synchronized Surround System for Multi Audio Devices
 
 This program compensates the audio device's delay to synchronize your multi audio devices.
-> So you can make a psuedo-surround system **even if your audio device doesn't support official surround system.**
+> So you can make a pseudo-surround system **even if your audio device doesn't support official surround system.**
 
 # Download
 - [GitHub Release](https://github.com/MineEric64/MultiAudioSync/releases/download/v1.0.5/MultiAudioSync.v1.0.5.x64.zip)
