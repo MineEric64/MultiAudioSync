@@ -14,8 +14,8 @@ Unfortunately, The app supports Windows 32bit & 64bit only.
 ## How To Use
 ![image1](https://github.com/MineEric64/MultiAudioSync/blob/main/docs/image1.jpg?raw=true)
 
-1. On Windows, Select the Windows default audio device to obsolete audio device
-2. On Program, Select the audio device and insert the offset number you want delay as much as
+1. On Windows, select the Windows default audio device to obsolete audio device
+2. On Program, select the audio device and insert the offset number you want delay as much as
 3. Click the button 'Apply Device Settings'
 4. From the groupbox 'from Audio Capture Device', insert the device's additional offset number you want delay additionally as much as
 5. If you want to mute certain audio device, click a checkbox 'Mute'
