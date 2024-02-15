@@ -8,7 +8,7 @@ This program compensates the audio device's delay to synchronize your multi audi
 
 # Download
 - [GitHub Release](https://github.com/MineEric64/MultiAudioSync/releases/download/v1.0.5/MultiAudioSync.v1.0.5.x64.zip)
-- 
+
 Unfortunately, The app supports Windows 32bit & 64bit only.
 
 ## How To Use
